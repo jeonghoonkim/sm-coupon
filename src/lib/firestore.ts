@@ -17,8 +17,6 @@ export type UserDoc = {
   photoURL?: string | null;
   createdAt?: Timestamp;
   updatedAt?: Timestamp;
-  // add any custom fields you want
-  [key: string]: any;
 };
 
 export const userDocRef = (uid: string) => doc(db, 'user', uid);

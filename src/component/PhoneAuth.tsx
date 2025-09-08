@@ -78,18 +78,20 @@ export default function PhoneAuth() {
       const e164 = toE164KR(phone);
       const conf = await signInWithPhoneNumber(auth, e164, appVerifier);
       setConfirmation(conf);
-    } catch (err: any) {
-      setError(err?.message ?? String(err));
-      // Reset reCAPTCHA to allow retry
-      recaptchaRef.current?.clear();
-      recaptchaRef.current = null;
-      // Recreate the verifier
-      recaptchaRef.current = new RecaptchaVerifier(
-        auth,
-        'recaptcha-container',
-        { size: 'invisible' }
-      );
-      void recaptchaRef.current.render();
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message ?? String(err));
+        // Reset reCAPTCHA to allow retry
+        recaptchaRef.current?.clear();
+        recaptchaRef.current = null;
+        // Recreate the verifier
+        recaptchaRef.current = new RecaptchaVerifier(
+          auth,
+          'recaptcha-container',
+          { size: 'invisible' }
+        );
+        void recaptchaRef.current.render();
+      }
     } finally {
       setSending(false);
     }
@@ -103,8 +105,8 @@ export default function PhoneAuth() {
       if (!confirmation) throw new Error('No verification in progress.');
       await confirmation.confirm(code);
       // onAuthStateChanged in AuthProvider/AuthGate will render the app after success
-    } catch (err: any) {
-      setError(err?.message ?? String(err));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setVerifying(false);
     }

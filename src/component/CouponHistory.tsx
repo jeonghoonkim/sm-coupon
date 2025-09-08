@@ -45,12 +45,12 @@ const CouponHistory = ({ uid }: CouponHistoryProps) => {
       q,
       (snapshot) => {
         const items: CouponHistoryItem[] = snapshot.docs.map((doc) => {
-          const data = doc.data() as any;
+          const data = doc.data() as CouponHistoryItem;
           return {
             id: doc.id,
             code: data?.code ?? '',
             msg: data?.msg ?? '',
-            created: data?.created ?? data?.createdAt ?? null,
+            created: data?.created,
           };
         });
 
@@ -96,8 +96,9 @@ const CouponHistory = ({ uid }: CouponHistoryProps) => {
       await navigator.clipboard.writeText(code);
       setCopiedId(id);
       setTimeout(() => setCopiedId((cur) => (cur === id ? null : cur)), 1200);
-    } catch {
+    } catch (err) {
       // no-op
+      console.log(err);
     }
   };
 
